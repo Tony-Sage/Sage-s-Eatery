@@ -1,0 +1,237 @@
+// create menu items
+const menuData = [
+      {
+        name: "Jollof Rice & Chicken",
+        description: "Spicy jollof rice served with grilled chicken.",
+        price: "₦2500",
+        image: "images/jollof.jpeg"
+      },
+      {
+        name: "Egusi & Fufu",
+        description: "Rich egusi soup served with soft fufu.",
+        price: "₦3000",
+        image: "images/egusi.jpeg"
+      },
+      {
+        name: "Fried Plantain & Beans",
+        description: "Sweet plantains with peppered beans porridge.",
+        price: "₦2000",
+        image: "images/beans.jpeg"
+      }
+];
+
+// sets the cart count to the number of items in the cartData array
+let cartCount;
+updateCartCount();
+function updateCartCount(){
+ if (JSON.parse(localStorage.getItem("cartData")) === null){
+ cartCount = 0
+} else {
+ cartCount = JSON.parse(localStorage.getItem("cartData")).length
+}
+document.getElementById("cart-count").innerText = cartCount;
+}
+
+// assigns the the HTML element, #menu, to a variable, menu, to be used later 
+const menu = document.getElementById("menu");
+
+// loops through menuData, creating a div each time to generate the menu display cards on the HTML page
+menuData.forEach((dish, index) => {
+ const card = document.createElement("div");
+ card.className = "card";
+
+ card.innerHTML = `
+  <img src="${dish.image}" alt="${dish.name}" />
+  <div class="card-body">
+  <h3>${dish.name}</h3>
+  <p>${dish.description}</p>
+  </div>
+   <div class="card-footer">
+   <span class="price">${dish.price}</span>
+   <button class="add-btn" data-index="${index}">Add ➕</button>
+  </div>`;
+ 
+ card.querySelector(".add-btn").addEventListener("click", () => {
+  
+  updateCart(index);
+  updateCartCount();
+  renderCart();
+  calculateCartTotal();
+  
+  document.getElementById("cart-count").innerText = cartCount;
+ });
+
+ menu.appendChild(card);
+});
+
+// gets and displays cart items from local storage. Creates a new array for cart items if local storage is empty
+const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+renderCart();
+calculateCartTotal();
+
+// creates new cart item object in the cart item array
+let cartItem
+function updateCart(index){
+ selectedDishIndex = parseInt(index)
+ selectedDish = menuData[selectedDishIndex]
+ const servings = prompt(`How many servings of ${selectedDish.name} are you ordering?`)
+ const dishQuantity = parseInt(servings)
+ if (isNaN(dishQuantity)){
+  alert('Please enter a valid number. Alphabets, symbols and emojis are not allowed')
+ } else {
+  cartItem = {
+   image: selectedDish.image,
+   name: selectedDish.name,
+   price: selectedDish.price,
+   quantity: dishQuantity,
+   tag: index
+  }
+  
+  let exists = false;
+  for (let i = 0; i < cartData.length; i++) {
+    if (cartData[i].tag === cartItem.tag) {
+      exists = true;
+      break;
+    }
+  }
+
+  if (exists) {
+    alert("Dish is already in cart! Increase the number of servings from the cart please");
+  } else {
+    cartData.push(cartItem);
+    localStorage.setItem("cartData", JSON.stringify(cartData));
+  }
+ }
+}
+
+
+// displays the cart item objects in the cart array, cartData, on the HTML element, cart-list
+function renderCart(){
+ document.querySelector('#cart-list').innerHTML = ""; 
+ let itemTotal
+ cartData.forEach((value, index) => {
+  const quantity = value.quantity
+  const price = parseInt(value.price.replace(/[^\d]/g, ""))
+  itemTotal = quantity * price
+  cartItemDiv = document.createElement("div")
+  cartItemDiv.className = "cart-item"
+  cartItemDiv.innerHTML = `
+  <div class="dish-quantity">
+   <div class="cart-thumbnail">
+    <img src="${value.image}">
+    <p>${value.name}</p>
+    <p>${value.price}</p>
+    <button class="quantity-control plusButton" data-index = ${index}>➕</button>
+    <button class="quantity-control minusButton" data-index = ${index}>➖</button>
+   </div>
+  <p>×${value.quantity}</p>
+ </div>
+ <p>${itemTotal}</p>
+ `
+ document.querySelector("#cart-list").appendChild(cartItemDiv) 
+ })
+ document.querySelectorAll('.plusButton').forEach(button => {
+  button.addEventListener("click", addToServings)
+ })
+ document.querySelectorAll('.minusButton').forEach(button => {
+  button.addEventListener("click", takeFromServings)
+ })
+}
+
+
+// calculates the total price of ordered dishes
+function calculateCartTotal(itemTotal){
+ const cartItemPrices = []
+ for(i = 0; i < cartData.length; i++){
+  itemPrice = cartData[i].price;
+  const price = parseInt(itemPrice.replace(/[^\d]/g, ""))
+  itemTotal = cartData[i].quantity * price
+  cartItemPrices.push(itemTotal)
+ }
+ 
+ let cartTotal = 0;
+ for(i = 0; i < cartItemPrices.length; i++){
+ cartTotal += cartItemPrices[i] 
+ }
+ document.querySelector("#cart-total-top").innerHTML = `Total: ${cartTotal}`
+ document.querySelector("#cart-total").innerHTML = `${cartTotal}`
+}
+
+//displays the cart section when the cart icon is clicked
+document.querySelector(".cart").addEventListener("click", function (){
+ document.querySelector("#cart-section").style.display = "flex";
+ document.querySelector("#menu-return-button").style.display = "block";
+ document.querySelector("#menu").style.display = "none";
+ document.querySelector(".categories").style.display = "none";
+ document.querySelector(".search-filter").style.display = "none";
+ document.querySelector(".cart").style.display = "none";
+});
+
+// returns to the menu page when the return to menu button is clicked
+document.querySelector("#menu-return-button").addEventListener("click", function(){
+ document.querySelector("#cart-section").style.display = "none";
+ document.querySelector("#menu-return-button").style.display = "none";
+ document.querySelector("#menu").style.display = "grid";
+ document.querySelector(".categories").style.display = "block";
+ document.querySelector(".search-filter").style.display = "block";
+ document.querySelector(".cart").style.display = "block";
+})
+
+// clears cart when either submit or place order button is clicked
+document.querySelectorAll('.cart-btn').forEach(
+ cartButton => {
+  cartButton.addEventListener("click", () => {
+   localStorage.clear();
+   cartData.length = 0;
+   renderCart();
+   document.getElementById("cart-count").innerText = 0;
+   document.getElementById("cart-total-top").innerHTML= "Total: 0";
+   document.getElementById("cart-total").innerHTML = 0;
+   
+   
+   if (cartButton.innerText == "Submit Order"){
+    document.querySelector('#success-message').innerHTML = "Your order have been submitted!"
+    setTimeout(() => {
+     document.querySelector('#success-message').innerText = ""
+    }, 1500)
+   } else {
+    document.querySelector('#success-message').innerHTML = "Your order will be printed"
+    setTimeout(() => {
+     document.querySelector('#success-message').innerText = ""
+    }, 1500)
+    window.print();
+   }
+  })
+ }
+)
+
+// increases the number of servings when add button is clicked
+function addToServings(){
+ number = event.target.dataset.index
+ cartData[number].quantity += 1;
+ cartItem = cartData[number]
+ calculateCartTotal()
+ renderCart()
+ updateCartData()
+}
+
+// reduces the number of servings when minus button is clicked
+function takeFromServings(){
+ number = event.target.dataset.index
+ if (cartData[number].quantity < 2){
+  cartData.splice(number, 1)
+  document.getElementById("cart-count").innerText -= 1;
+ } else {
+  cartData[number].quantity -= 1;
+ }
+ calculateCartTotal()
+ renderCart()
+ updateCartData()
+}
+
+function updateCartData(){
+ localStorage.removeItem("cartData")
+ localStorage.setItem("cartData", JSON.stringify(cartData));
+}
+
+window.print();
