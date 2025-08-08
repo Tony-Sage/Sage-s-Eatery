@@ -233,5 +233,3 @@ function updateCartData(){
  localStorage.removeItem("cartData")
  localStorage.setItem("cartData", JSON.stringify(cartData));
 }
-
-window.print();
