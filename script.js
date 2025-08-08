@@ -196,10 +196,10 @@ document.querySelectorAll('.cart-btn').forEach(
     }, 1500)
    } else {
     document.querySelector('#success-message').innerHTML = "Your order will be printed"
+    window.print();
     setTimeout(() => {
      document.querySelector('#success-message').innerText = ""
     }, 1500)
-    window.print();
    }
   })
  }
