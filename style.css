@@ -225,3 +225,10 @@ header {
  background: #f90000;
  border-radius: 0.2rem;
 }
+
+/* styling for print media */
+@media print {
+ .no-print {
+  display: none;
+ }
+ }
