@@ -201,8 +201,8 @@ document.querySelectorAll('.cart-btn').forEach(
      document.querySelector('#success-message').innerText = ""
     }, 1500)
     window.print();
-    renderCart();
    }
+   renderCart();
   })
  }
 )
