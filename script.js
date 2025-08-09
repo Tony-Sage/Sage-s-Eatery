@@ -183,20 +183,25 @@ document.querySelectorAll('.cart-btn').forEach(
   cartButton.addEventListener("click", () => {
    localStorage.clear();
    cartData.length = 0;
-   renderCart();
+   //renderCart();
    document.getElementById("cart-count").innerText = 0;
    document.getElementById("cart-total-top").innerHTML= "Total: 0";
    document.getElementById("cart-total").innerHTML = 0;
    
    
    if (cartButton.innerText == "Submit Order"){
-    document.querySelector('#success-message').innerHTML = "Your order have been submitted!"
+    document.querySelector('#success-message').innerHTML = "Your order have been submitted!";
+    renderCart();
     setTimeout(() => {
      document.querySelector('#success-message').innerText = ""
     }, 1500)
    } else {
     document.querySelector('#success-message').innerHTML = "Your order will be printed"
+    setTimeout(() => {
+     document.querySelector('#success-message').innerText = ""
+    }, 1500)
     window.print();
+    renderCart();
    }
   })
  }
