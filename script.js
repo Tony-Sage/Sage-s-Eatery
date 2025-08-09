@@ -178,36 +178,56 @@ document.querySelector("#menu-return-button").addEventListener("click", function
 })
 
 // clears cart when either submit or place order button is clicked
+let successMessageTimer;
 document.querySelectorAll('.cart-btn').forEach(
  cartButton => {
   cartButton.addEventListener("click", () => {
    localStorage.clear();
    cartData.length = 0;
-   //renderCart();
-   
-   
-   
+   //code for submit button
    if (cartButton.innerText == "Submit Order"){
-    document.querySelector('#success-message').innerHTML = "Your order have been submitted!";
-    document.getElementById("cart-count").innerText = 0;
-    document.getElementById("cart-total-top").innerHTML= "Total: 0";
-    document.getElementById("cart-total").innerHTML = 0;
-    renderCart();
+    i = 10;
+    successMessageTimer = setInterval(() => {
+     if (i > 0){
+      document.querySelector("#success-message").style.display = "block"
+      document.querySelector('#success-message').innerHTML = `Your order have been submitted. <br> Print receipt before it clears in <span class='timer'>${i}</span> seconds`
+      i--
+     } else {
+      clearInterval(successMessageTimer)
+     }
+    }, 1000)
     setTimeout(() => {
-     document.querySelector('#success-message').innerText = ""
-    }, 1500)
-   } else {
-    document.querySelector('#success-message').innerHTML = "Your order will be printed"
-    setTimeout(() => {
-     document.querySelector('#success-message').innerText = ""
-    }, 1500)
-    window.print();
+     document.querySelector("#success-message").style.display = "none"
+    }, 11000)
     setTimeout(() => {
      document.getElementById("cart-count").innerText = 0;
      document.getElementById("cart-total-top").innerHTML= "Total: 0";
      document.getElementById("cart-total").innerHTML = 0;
      renderCart();
-    }, 6000)
+    }, 11000)
+    setTimeout(() => {
+     document.querySelector('#success-message').innerText = ""
+    }, 11000)
+   } 
+   // code for print button
+   else 
+   {
+    confirmOrder = confirm("Place order and print receipt?")
+    if (confirmOrder){
+     document.querySelector('#success-message').innerHTML = "Your order has been submitted and your receipt will be printed"
+     document.querySelector('#success-message').style.display = "block"
+     setTimeout(() => {
+      document.querySelector('#success-message').style.display = "none"
+      document.querySelector('#success-message').innerText = ""
+     }, 2000)
+     window.print();
+     setTimeout(() => {
+      document.getElementById("cart-count").innerText = 0;
+      document.getElementById("cart-total-top").innerHTML= "Total: 0";
+      document.getElementById("cart-total").innerHTML = 0;
+      renderCart();
+     }, 6000)
+    }
    }
   })
  }
@@ -240,4 +260,4 @@ function takeFromServings(){
 function updateCartData(){
  localStorage.removeItem("cartData")
  localStorage.setItem("cartData", JSON.stringify(cartData));
-                                                 }
+}
