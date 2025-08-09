@@ -228,6 +228,10 @@ header {
 
 /* styling for print media */
 @media print {
+ #cart-section {
+  font-size: 1.5rem;
+ }
+ 
  .no-print {
   display: none;
  }
