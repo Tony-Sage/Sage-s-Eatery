@@ -201,8 +201,10 @@ document.querySelectorAll('.cart-btn').forEach(
      document.querySelector('#success-message').innerText = ""
     }, 1500)
     window.print();
+    setTimeout(() => {
+     renderCart();
+    }, 6000)
    }
-   renderCart();
   })
  }
 )
