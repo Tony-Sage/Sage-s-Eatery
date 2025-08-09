@@ -235,4 +235,8 @@ header {
  .no-print {
   display: none;
  }
+ 
+ .quantity-control {
+  display: none;
  }
+}
