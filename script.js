@@ -184,13 +184,14 @@ document.querySelectorAll('.cart-btn').forEach(
    localStorage.clear();
    cartData.length = 0;
    //renderCart();
-   document.getElementById("cart-count").innerText = 0;
-   document.getElementById("cart-total-top").innerHTML= "Total: 0";
-   document.getElementById("cart-total").innerHTML = 0;
+   
    
    
    if (cartButton.innerText == "Submit Order"){
     document.querySelector('#success-message').innerHTML = "Your order have been submitted!";
+    document.getElementById("cart-count").innerText = 0;
+    document.getElementById("cart-total-top").innerHTML= "Total: 0";
+    document.getElementById("cart-total").innerHTML = 0;
     renderCart();
     setTimeout(() => {
      document.querySelector('#success-message').innerText = ""
@@ -202,6 +203,9 @@ document.querySelectorAll('.cart-btn').forEach(
     }, 1500)
     window.print();
     setTimeout(() => {
+     document.getElementById("cart-count").innerText = 0;
+     document.getElementById("cart-total-top").innerHTML= "Total: 0";
+     document.getElementById("cart-total").innerHTML = 0;
      renderCart();
     }, 6000)
    }
@@ -236,4 +240,4 @@ function takeFromServings(){
 function updateCartData(){
  localStorage.removeItem("cartData")
  localStorage.setItem("cartData", JSON.stringify(cartData));
-}
+                                                 }
